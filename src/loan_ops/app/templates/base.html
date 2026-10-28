@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title | default("loan-ops") }}</title>
+  <script src="/static/htmx.min.js"></script>
+  <style>
+    :root { --ok:#1a7f37; --bad:#cf222e; --warn:#9a6700; }
+    body { font-family: ui-sans-serif, system-ui, sans-serif; margin: 2rem; background:#f6f8fa; color:#1f2328; }
+    main { max-width: 60rem; margin: 0 auto; }
+    h1 { font-size: 1.5rem; } h2 { font-size: 1.1rem; margin-top: 2rem; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { padding: .5rem .75rem; border-bottom: 1px solid #d0d7de; text-align: left; font-size: .9rem; }
+    .outcome-approved { color: var(--ok); font-weight: 600; }
+    .outcome-denied { color: var(--bad); font-weight: 600; }
+    .outcome-refer { color: var(--warn); font-weight: 600; }
+    form { background:#fff; padding: 1rem; border: 1px solid #d0d7de; display: grid;
+           grid-template-columns: 1fr 1fr; gap: .5rem .75rem; }
+    label { font-size: .8rem; }
+    input, select { padding: .35rem; border: 1px solid #d0d7de; width: 100%; }
+    button { grid-column: span 2; padding: .5rem; background: #1f883d; color: #fff;
+             border: none; cursor: pointer; font-weight: 600; }
+    .badge { display:inline-block; padding: .1rem .5rem; border-radius: 6px; font-size: .75rem;
+             background: #eaeef2; }
+    a { color: #0969da; text-decoration: none; }
+    .muted { color:#57606a; font-size:.8rem; }
+    pre { background: #fff; padding: .75rem; border: 1px solid #d0d7de; overflow-x: auto;
+          font-size: .8rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1><a href="/">loan-ops</a> — loan approval (local)</h1>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

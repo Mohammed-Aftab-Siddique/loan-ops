@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section>
+  <h2>Dataset — data/loan_applications.json</h2>
+  <p class="muted">
+    Fictional intake dataset aligned with <code>docs/POLICY.md</code>. Click an application
+    for its details and a one-click agent run. Free-form submissions go through
+    <code>POST /api/applications</code>.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Applicant</th><th>Amount</th><th>Purpose</th>
+        <th>Income</th><th>Score</th><th>Status</th><th>Detail</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td>{{ row.application_id }}</td>
+        <td>{{ row.applicant_name }}</td>
+        <td>{{ row.loan_amount|usd }}</td>
+        <td>{{ row.loan_purpose }}</td>
+        <td>{{ row.monthly_income|usd0 }}</td>
+        <td>{{ row.credit_score }}</td>
+        <td>
+          {% if row.processed %}
+            <a href="/audit/{{ row.processed.id }}">
+              <span class="outcome-{{ row.processed.outcome }}">{{ row.processed.outcome }}</span> (run #{{ row.processed.id }})
+            </a>
+          {% else %}
+            <span class="muted">waiting</span>
+          {% endif %}
+        </td>
+        <td><a href="/dataset/{{ row.application_id }}">view</a></td>
+      </tr>
+    {% else %}
+      <tr><td colspan="8" class="muted">No dataset found.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+{% if referrals %}
+<section>
+  <h2>Underwriter queue (refer)</h2>
+  {% for r in referrals %}
+  <table>
+    <tr><th>#{{ r.id }} {{ r.applicant_name }}</th><th>{{ r.loan_amount|usd }}</th><th>{{ r.state }}</th></tr>
+    <tr><td colspan="3">
+      <form method="post" action="/underwriter/{{ r.id }}">
+        <label>Decision
+          <select name="decision">
+            <option value="approved">approved</option>
+            <option value="denied">denied</option>
+          </select>
+        </label>
+        <label>Underwriter ID <input name="underwriter_id" required></label>
+        <button type="submit">Record human decision</button>
+      </form>
+    </td></tr>
+  </table>
+  {% endfor %}
+</section>
+{% endif %}
+
+{% endblock %}

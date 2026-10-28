@@ -1,0 +1,749 @@
+{
+  "notes": {
+    "description": "Expected loan approval status for every record in loan_applications.json, produced by running the real loan-ops code path (intake validation -> four checks -> deterministic decision rules). Not hand-written.",
+    "status_values": [
+      "approved",
+      "denied",
+      "refer",
+      "rejected_at_intake"
+    ],
+    "status_meaning": "'rejected_at_intake' is not one of the three decision outcomes; it means the record failed intake validation and was returned to the applicant without entering review (docs/PROCESS.md, docs/PROC.md step 2).",
+    "reason": "The rule(s) from docs/PROCESS.md that produced the status, including the executed check result(s) that justify it.",
+    "ui_visibility": "Not displayed in the UI. The web UI keeps every application in a waiting state until the agent runs; this file exists for offline verification and tests."
+  },
+  "decisions": [
+    {
+      "application_id": "APP-0001",
+      "applicant_name": "Maya Fernandez",
+      "loan_amount": 12000,
+      "status": "approved",
+      "reason": "All four checks passed and the amount is within the automated limit.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 18.8% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0002",
+      "applicant_name": "Owen Bradley",
+      "loan_amount": 50000,
+      "status": "approved",
+      "reason": "All four checks passed and the amount is within the automated limit.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 23.3% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0003",
+      "applicant_name": "Priya Raman",
+      "loan_amount": 60000,
+      "status": "refer",
+      "reason": "Loan amount $60,000.00 exceeds the automated limit.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 18.3% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0004",
+      "applicant_name": "Daniel Okafor",
+      "loan_amount": 36000,
+      "status": "approved",
+      "reason": "All four checks passed and the amount is within the automated limit.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 40.0% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0005",
+      "applicant_name": "Sara Lindqvist",
+      "loan_amount": 36001,
+      "status": "refer",
+      "reason": "Borderline result in affordability: DTI 40.0% falls in the refer band (40%-44%).",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "refer",
+          "reason": "DTI 40.0% falls in the refer band (40%-44%)."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0006",
+      "applicant_name": "Marcus Webb",
+      "loan_amount": 40801,
+      "status": "denied",
+      "reason": "Hard fail in affordability check: DTI 44.0% exceeds the hard limit of 44%.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "fail",
+          "reason": "DTI 44.0% exceeds the hard limit of 44%."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0007",
+      "applicant_name": "Helena Cruz",
+      "loan_amount": 40800,
+      "status": "refer",
+      "reason": "Borderline result in affordability: DTI 44.0% falls in the refer band (40%-44%).",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "refer",
+          "reason": "DTI 44.0% falls in the refer band (40%-44%)."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0008",
+      "applicant_name": "Tomasz Nowak",
+      "loan_amount": 10000,
+      "status": "approved",
+      "reason": "All four checks passed and the amount is within the automated limit.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 17.2% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0009",
+      "applicant_name": "Kwame Mensah",
+      "loan_amount": 15000,
+      "status": "denied",
+      "reason": "Hard fail in identity check: Proof of address is 91 days old (older than the 90-day policy limit).",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "fail",
+          "reason": "Proof of address is 91 days old (older than the 90-day policy limit)."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 18.3% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0010",
+      "applicant_name": "Elena Petrova",
+      "loan_amount": 18000,
+      "status": "refer",
+      "reason": "Borderline result in identity: Recent legal name change lacks supporting papers; verify manually.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "refer",
+          "reason": "Recent legal name change lacks supporting papers; verify manually."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 24.7% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0011",
+      "applicant_name": "Ray Donnelly",
+      "loan_amount": 9000,
+      "status": "denied",
+      "reason": "Hard fail in credit check: Credit score 579 is below the hard-fail floor of 580.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "fail",
+          "reason": "Credit score 579 is below the hard-fail floor of 580."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 15.0% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0012",
+      "applicant_name": "Ingrid Bauer",
+      "loan_amount": 9000,
+      "status": "refer",
+      "reason": "Borderline result in credit: Score 580-649 or settled default within grace period; borderline file.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "refer",
+          "reason": "Score 580-649 or settled default within grace period; borderline file."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 15.0% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0013",
+      "applicant_name": "Yuki Tanaka",
+      "loan_amount": 15000,
+      "status": "approved",
+      "reason": "All four checks passed and the amount is within the automated limit.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 31.0% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0014",
+      "applicant_name": "Amir Haddad",
+      "loan_amount": 8000,
+      "status": "refer",
+      "reason": "Borderline result in credit: Insufficient credit history (11 months < 12); thin file needs eyes.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "refer",
+          "reason": "Insufficient credit history (11 months < 12); thin file needs eyes."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 21.7% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0015",
+      "applicant_name": "Nadia Osei",
+      "loan_amount": 10000,
+      "status": "refer",
+      "reason": "Borderline result in credit: Score 580-649 or settled default within grace period; borderline file.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "refer",
+          "reason": "Score 580-649 or settled default within grace period; borderline file."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 15.4% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0016",
+      "applicant_name": "Victor Alvarez",
+      "loan_amount": 20000,
+      "status": "denied",
+      "reason": "Hard fail in credit check: Active bankruptcy on record.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "fail",
+          "reason": "Active bankruptcy on record."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 20.6% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0017",
+      "applicant_name": "Fatima Zahra",
+      "loan_amount": 22000,
+      "status": "denied",
+      "reason": "Hard fail in credit check: Unresolved default on record.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "fail",
+          "reason": "Unresolved default on record."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 23.0% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0018",
+      "applicant_name": "Colin Murphy",
+      "loan_amount": 12000,
+      "status": "refer",
+      "reason": "Borderline result in affordability: Income documents partially missing; affordability unverifiable.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "refer",
+          "reason": "Income documents partially missing; affordability unverifiable."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0019",
+      "applicant_name": "Deshaun Carter",
+      "loan_amount": 25000,
+      "status": "denied",
+      "reason": "Hard fail in affordability check: Loan purpose 'gambling' is ineligible by policy.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "fail",
+          "reason": "Loan purpose 'gambling' is ineligible by policy."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0020",
+      "applicant_name": "Leila Mansour",
+      "loan_amount": 30000,
+      "status": "denied",
+      "reason": "Hard fail in affordability check: Loan purpose 'crypto trading' is ineligible by policy.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "fail",
+          "reason": "Loan purpose 'crypto trading' is ineligible by policy."
+        },
+        {
+          "check": "fraud",
+          "result_class": "pass",
+          "reason": "No fraud signals detected."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0021",
+      "applicant_name": "Bruno Keller",
+      "loan_amount": 35000,
+      "status": "denied",
+      "reason": "Hard fail in fraud check: Confirmed blacklist match or synthetic identity indicators.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 22.9% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "fail",
+          "reason": "Confirmed blacklist match or synthetic identity indicators."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0022",
+      "applicant_name": "Ash Nguyen",
+      "loan_amount": 38000,
+      "status": "denied",
+      "reason": "Hard fail in fraud check: Confirmed blacklist match or synthetic identity indicators.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 23.0% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "fail",
+          "reason": "Confirmed blacklist match or synthetic identity indicators."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0023",
+      "applicant_name": "Rosa Delgado",
+      "loan_amount": 20000,
+      "status": "refer",
+      "reason": "Borderline result in fraud: Single soft fraud signal; manual verification required.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 23.9% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "refer",
+          "reason": "Single soft fraud signal; manual verification required."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0024",
+      "applicant_name": "Peter Ivanov",
+      "loan_amount": 20000,
+      "status": "refer",
+      "reason": "Borderline result in fraud: 2 soft signals \u2014 escalate for hard-fail review.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "pass",
+          "reason": "Credit score meets the approval threshold; no adverse records."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 23.9% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "refer",
+          "reason": "2 soft signals \u2014 escalate for hard-fail review."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0025",
+      "applicant_name": "Chloe Baptiste",
+      "loan_amount": 14000,
+      "status": "refer",
+      "reason": "Borderline result in credit, fraud: Score 580-649 or settled default within grace period; borderline file.; Single soft fraud signal; manual verification required.",
+      "checks": [
+        {
+          "check": "identity",
+          "result_class": "pass",
+          "reason": "Identity documents valid and match application data."
+        },
+        {
+          "check": "credit",
+          "result_class": "refer",
+          "reason": "Score 580-649 or settled default within grace period; borderline file."
+        },
+        {
+          "check": "affordability",
+          "result_class": "pass",
+          "reason": "DTI 19.6% is within the 40% limit."
+        },
+        {
+          "check": "fraud",
+          "result_class": "refer",
+          "reason": "Single soft fraud signal; manual verification required."
+        }
+      ]
+    },
+    {
+      "application_id": "APP-0026",
+      "applicant_name": "Ivan Zero",
+      "loan_amount": 0,
+      "status": "rejected_at_intake",
+      "reason": "Intake validation failed: 1 validation error for LoanApplication\nloan_amount\n  Input should be greater than 0 [type=greater_than, input_value=0, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.14/v/greater_than",
+      "checks": []
+    }
+  ]
+}

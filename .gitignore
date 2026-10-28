@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+
+# loan-ops runtime
+*.db
+*.sqlite3
+
+# tooling
+.coverage
+htmlcov/
+.ruff_cache/
+.pytest_cache/
+
+.env
+uv.lock.bak

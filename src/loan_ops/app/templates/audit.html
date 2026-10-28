@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Application #{{ app.id }} — outcome: <span class="outcome-{{ app.outcome or 'pending' }}">{{ app.outcome or 'pending' }}</span></h2>
+<p class="muted">{{ app.applicant_name }} · loan {{ app.loan_amount|usd }} · state {{ app.state }}</p>
+
+<h2>Check results</h2>
+<table>
+  <thead><tr><th>Check</th><th>Result class</th><th>Reason</th></tr></thead>
+  <tbody>
+  {% for cr in app.check_results %}
+    <tr>
+      <td>{{ cr.check }}</td>
+      <td><span class="outcome-{{ {'pass': 'approved', 'fail': 'denied'}[cr.result_class] if cr.result_class in ('pass','fail') else 'refer' }}">{{ cr.result_class }}</span></td>
+      <td>{{ cr.reason }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan=3 class="muted">No check results recorded.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>Audit trail (append-only)</h2>
+<table>
+  <thead><tr><th>#</th><th>Time</th><th>Actor</th><th>Event</th><th>Detail</th></tr></thead>
+  <tbody>
+  {% for entry in audit %}
+    <tr>
+      <td>{{ entry.id }}</td>
+      <td>{{ entry.created_at }}</td>
+      <td>{{ entry.actor }}</td>
+      <td>{{ entry.event }}</td>
+      <td><code>{{ entry.detail | tojson }}</code></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

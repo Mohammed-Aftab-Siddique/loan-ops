@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% set current_run = processed %}
+<h2>Application {{ application.application_id }} — {{ application.applicant_name }}</h2>
+<p class="muted">
+  {% if current_run %}
+    Status:
+    <span class="outcome-{{ current_run.outcome }}">{{ current_run.outcome }}</span>
+    (latest run #{{ current_run.id }})
+  {% else %}
+    Status: <span class="muted">waiting</span> — the agent has not processed this application yet.
+  {% endif %}
+</p>
+
+<section>
+  <h2>Intake fields</h2>
+  <table>
+    <tbody>
+    {% for field, value in application.items() %}
+      <tr><th>{{ field }}</th><td>{{ value if value is not none else '—' }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Agent run</h2>
+  <form method="post" action="/dataset/{{ application.application_id }}/process">
+    <button type="submit">Run agent on this application</button>
+  </form>
+
+  {% if result %}
+    <p>
+      Latest agent outcome:
+      <span class="outcome-{{ result.outcome }}">{{ result.outcome }}</span>
+      · DB run #{{ result.application_id }} ·
+      <a href="/audit/{{ result.application_id }}">open audit page</a>
+    </p>
+    <p>{{ result.rule }}</p>
+    <table>
+      <thead><tr><th>Check</th><th>Result class</th><th>Reason</th></tr></thead>
+      <tbody>
+      {% for cr in result.check_results %}
+        <tr>
+          <td>{{ cr.check }}</td>
+          <td>{{ cr.result_class }}</td>
+          <td>{{ cr.reason }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% elif error %}
+    <p class="outcome-denied">Intake rejected: {{ error }}</p>
+  {% elif current_run %}
+    <p>
+      Latest agent outcome:
+      <span class="outcome-{{ current_run.outcome }}">{{ current_run.outcome }}</span>
+      · DB run #{{ current_run.id }} ·
+      <a href="/audit/{{ current_run.id }}">open audit page</a>
+    </p>
+  {% else %}
+    <p class="muted">Not processed yet — the button above fires the agent.</p>
+  {% endif %}
+
+  {% if current_run and current_run.outcome == 'refer' and current_run.state == 'referred' %}
+    <form method="post" action="/underwriter/{{ current_run.id }}">
+      <label>Decision
+        <select name="decision">
+          <option value="approved">approved</option>
+          <option value="denied">denied</option>
+        </select>
+      </label>
+      <label>Underwriter ID <input name="underwriter_id" required></label>
+      <button type="submit">Record human decision</button>
+    </form>
+  {% endif %}
+</section>
+
+<p><a href="/">&#8592; back to dataset</a></p>
+{% endblock %}
