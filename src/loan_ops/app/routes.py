@@ -125,6 +125,24 @@ def underwriter_decision(
     )
 
 
+@page_router.post("/harness/process-batch", response_class=HTMLResponse, tags=["pages"])
+def harness_process_batch(request: Request):
+    """Process the top 5 waiting applications via batch sub-agents
+    (docs/HARNESS.md) and re-render the dataset page with the summary."""
+    from loan_ops import harness
+
+    report = harness.run_batch()
+    return templates.TemplateResponse(
+        request,
+        "index.html",
+        {
+            "rows": dataset.ui_rows(),
+            "referrals": records.referral_queue(),
+            "batch_report": harness.format_summary(report),
+        },
+    )
+
+
 @page_router.get("/audit/{app_id}", response_class=HTMLResponse, tags=["pages"])
 def audit_page(request: Request, app_id: int):
     stored = records.get_application(app_id)

@@ -46,6 +46,10 @@ This document is the build plan for the local web application described in `docs
 3. Audit entries immutable from the UI; referrals only closable by a human decision.
 4. **Verify:** manual walk-through with the local server: open dataset → open an application → fire the agent → outcome + audit entry visible.
 
+*Follow-up: the batch harness (process the top 5 waiting applications via
+individual sub-agents from the CLI) is planned and built in
+`docs/PLAN_HARNESS.md` / `docs/HARNESS.md`.*
+
 ## Phase 5 — Hardening & Docs
 
 1. Error handling: unreachable or misconfigured provider (dead Ollama, bad OpenRouter key) → application states as `refer` (never guess), with a clear error surfaced; missing API keys fail fast at startup with an actionable message.

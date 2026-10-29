@@ -166,9 +166,15 @@ def build_decision_agent(model: BaseChatModel, app: LoanApplication) -> tuple[An
 
 
 def run_decision(
-    app: LoanApplication, model: BaseChatModel | None = None
+    app: LoanApplication,
+    model: BaseChatModel | None = None,
+    extra_context: str | None = None,
 ) -> Decision:
     """Run the agent end-to-end for one application and return the Decision.
+
+    Each call builds a fresh agent instance and run state — one isolated
+    sub-agent run per application. `extra_context` (e.g. harness-loaded
+    required reading, docs/HARNESS.md) is appended to the task prompt.
 
     Any structured-output failure degrades to outcome "refer" (GOALS 3.4);
     provider errors are raised to callers (docs/PROC.md step 3).
@@ -184,6 +190,8 @@ def run_decision(
         f"for ${app.loan_amount:,.2f} ({app.loan_purpose}). "
         "Run all four checks in order, then record the decision."
     )
+    if extra_context:
+        prompt = f"{prompt}\n\n{extra_context}"
     outcome, rule = "refer", "Agent produced no structured decision; escalated."
     structured_ok = False
     try:

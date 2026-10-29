@@ -14,6 +14,7 @@ from loan_ops.records import (
     create_application,
     get_application,
     get_audit,
+    log_audit,
     save_check_results,
     save_decision,
 )
@@ -39,14 +40,23 @@ def _provider_unavailable_decision(
     )
 
 
-def process(payload: dict[str, Any]) -> dict[str, Any]:
+def process(
+    payload: dict[str, Any],
+    extra_context: str | None = None,
+    context_meta: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Full run-through for one application.
 
     Steps (docs/PROC.md): intake validation (2), checks executed via agent
     tools (3), decision from process rules (4-5), persistence + audit (6),
-    verify audit entry (8).
+    verify audit entry (8). `extra_context` (e.g. harness-loaded docs) is
+    injected into the per-application sub-agent's task prompt; `context_meta`
+    records what context the run loaded in a `context_loaded` audit event.
     """
     application_id = create_application(payload)
+    if context_meta is not None:
+        with session_scope() as session:
+            log_audit(session, application_id, "context_loaded", context_meta, actor="harness")
     stored = get_application(application_id)
     if stored is None:  # pragma: no cover - defensive
         raise RuntimeError(f"application {application_id} vanished after insert")
@@ -55,7 +65,7 @@ def process(payload: dict[str, Any]) -> dict[str, Any]:
     )
 
     try:
-        decision = run_decision(app)
+        decision = run_decision(app, extra_context=extra_context)
     except Exception as exc:  # provider unreachable / misconfigured
         decision = _provider_unavailable_decision(app, application_id, exc)
 

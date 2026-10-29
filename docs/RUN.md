@@ -36,6 +36,25 @@ You will get:
 
 Free-form intake is JSON-API-only; every application submitted through the dataset UI keeps its dataset ID (`application_id` like `APP-0001`) in the stored payload.
 
+## Operating from the command line: the batch harness
+
+While `uv run loan-ops` drives one application at a time through the UI, the
+batch harness (see `docs/HARNESS.md`) processes the queue on its own:
+
+```bash
+uv run loan-ops process-batch              # process the top 5 waiting applications
+uv run loan-ops process-batch --batch-size 5
+```
+
+It walks the dataset queue in blocks of 5: a block whose members all already
+have a run is skipped; the first block containing waiting applications is
+processed, one **individual sub-agent run per application** (each with the four
+documents required by `docs/PROC.md` read from disk and audited via a
+`context_loaded` event). The dataset page also has a **Process top 5 waiting**
+button running the same batch through the web app. Only applications inside
+the selected block are ever modified; run it while the server is stopped
+(SQLite single-writer).
+
 ## Configuration (environment variables only)
 
 | Variable | Default | Purpose |

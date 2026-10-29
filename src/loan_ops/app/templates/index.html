@@ -8,6 +8,12 @@
     for its details and a one-click agent run. Free-form submissions go through
     <code>POST /api/applications</code>.
   </p>
+  {% if batch_report %}
+  <pre>{{ batch_report }}</pre>
+  {% endif %}
+  <form method="post" action="/harness/process-batch">
+    <button type="submit">Process top 5 waiting</button>
+  </form>
   <table>
     <thead>
       <tr>
